@@ -20,6 +20,7 @@
 #include <QLabel>
 
 
+
 struct CharacterIcon {
     QString name;
     QString iconPath;
@@ -50,7 +51,7 @@ public:
     void mousePressEvent(QMouseEvent *event);
    //QList<CharacterIcon> loadCharacterIconsFromJson(const QString &filePath);
     void handleIconRightClick(QGraphicsSceneMouseEvent *event);
-    void createCharacterIconContextMenu(QGraphicsPixmapItem *item, QPoint position);
+    void createCharacterIconContextMenu(QGraphicsPixmapItem *pixmapItem, const QPoint &pos);
     void removeCharacterIcon(QGraphicsPixmapItem *item);
 
 

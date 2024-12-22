@@ -1,11 +1,11 @@
 {
     "class": "",
     "health": 0,
-    "imagePath": "C:/Users/mamin/OneDrive/Рабочий стол/DnD_final/DnD_final/build/Qt_6_8_0_mingw_64-Debug/images/png-transparent-brown-character-eye-of-the-beholder-dungeons-dragons-dungeon-master-role-playing-game-dungeons-and-dragons-monster-game-dragon-roleplaying-thumbnail.png",
+    "imagePath": "C:/Users/mamin/OneDrive/Рабочий стол/DnD_final/DnD_final/build/Qt_6_8_0_mingw_64-Debug/images/woman.jfif",
     "main_characteristic": "Сила",
     "mastership_bonus": 0,
     "name": "п",
-    "race": "",
+    "race": "а",
     "size": "",
     "worldview": ""
 }

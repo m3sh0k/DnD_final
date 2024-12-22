@@ -138,42 +138,23 @@ bool mapviewwidget::eventFilter(QObject *object, QEvent *event)
 }
 
 
-
 void mapviewwidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        // Если нажата левая кнопка мыши, выбираем элемент
-        QPointF scenePos = ui->graphicsView->mapToScene(event->pos());
-        QList<QGraphicsItem*> selectedItems = scene->items(scenePos);
+        // Если нажата левая кнопка мыши, начинаем перетаскивание
+        QPointF scenePos = ui->graphicsView->mapToScene(event->pos()); // Получаем позицию в сцене
+        QList<QGraphicsItem*> selectedItems = scene->items(scenePos);  // Получаем все элементы на этой позиции
+
         if (!selectedItems.isEmpty()) {
             // Если элемент выбран, выделяем его
             selectedItems.first()->setSelected(true);
         }
     }
     else if (event->button() == Qt::RightButton) {
-        QPointF scenePos = ui->graphicsView->mapToScene(event->pos()); // Позиция клика в сцене
-
-        // Получаем список всех элементов на позиции клика
-        QList<QGraphicsItem*> selectedItems = scene->items(scenePos);
-
-        if (!selectedItems.isEmpty()) {
-            QGraphicsItem* item = selectedItems.first(); // Берем первый элемент, найденный на этой позиции
-
-            // Проверяем, является ли этот элемент иконкой персонажа (QGraphicsPixmapItem)
-            if (QGraphicsPixmapItem* pixmapItem = qgraphicsitem_cast<QGraphicsPixmapItem*>(item)) {
-                // Если это иконка, вызываем контекстное меню для иконки
-                createCharacterIconContextMenu(pixmapItem, event->pos());
-                return; // Блокируем дальнейшую обработку события, чтобы не вызвать контекстное меню для карты
-            }
-        }
-
-        // Если клик был не по иконке, вызываем контекстное меню для карты
-        createContextMenu(event->pos());
+        // При правом клике ничего не делаем в mousePressEvent
+        // Это для предотвращения конфликта между перетаскиванием карты и контекстным меню.
     }
-
-    QWidget::mousePressEvent(event); // Важно вызвать базовый класс для нормальной работы других событий
 }
-
 
 
 // Метод для добавления иконки персонажа на карту
@@ -322,47 +303,7 @@ void mapviewwidget::createContextMenu(QPoint position)
     contextMenu.exec(ui->graphicsView->mapToGlobal(position));
 }
 
-// Дополняем метод EventFilter для перетаскивания иконки
-bool mapviewwidget::Event_Filter(QObject *object, QEvent *event)
-{
-    if (object == ui->graphicsView->viewport()) { // Проверяем, что событие относится к графическому виду
-        switch (event->type()) {
-        case QEvent::MouseButtonPress: {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // Приводим событие к типу QMouseEvent
-            if (mouseEvent->button() == Qt::RightButton) { // Если была нажата правая кнопка мыши
-                QPointF scenePos = ui->graphicsView->mapToScene(mouseEvent->pos()); // Позиция клика в сцене
-
-                // Получаем список всех элементов на позиции клика
-                QList<QGraphicsItem*> selectedItems = scene->items(scenePos);
-
-                if (!selectedItems.isEmpty()) {
-                    QGraphicsItem* item = selectedItems.first(); // Берем первый элемент, найденный на этой позиции
-
-                    // Проверяем, является ли этот элемент иконкой персонажа (QGraphicsPixmapItem)
-                    if (QGraphicsPixmapItem* pixmapItem = qgraphicsitem_cast<QGraphicsPixmapItem*>(item)) {
-                        // Если это иконка, вызываем контекстное меню для иконки (для удаления)
-                        createCharacterIconContextMenu(pixmapItem, mouseEvent->pos());
-                        return true; // Блокируем дальнейшую обработку события
-                    }
-                }
-
-                // Если клик был не по иконке, вызываем контекстное меню для карты (для добавления)
-                createContextMenu(mouseEvent->pos());
-                return true; // Блокируем дальнейшую обработку события
-            }
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
-
-    return QWidget::eventFilter(object, event); // Вызов базового обработчика событий
-}
-
-
-
+/*
 // Метод для удаления иконки с карты
 void mapviewwidget::removeCharacterIcon(QGraphicsPixmapItem *item)
 {
@@ -373,17 +314,16 @@ void mapviewwidget::removeCharacterIcon(QGraphicsPixmapItem *item)
 }
 
 // Метод для создания контекстного меню для иконки персонажа
-void mapviewwidget::createCharacterIconContextMenu(QGraphicsPixmapItem *item, QPoint position) {
-    QMenu contextMenu;
-
-    QAction *removeIconAction = new QAction("Remove Character Icon", this);
-    contextMenu.addAction(removeIconAction);
-
-    connect(removeIconAction, &QAction::triggered, this, [this, item]() {
-        removeCharacterIcon(item);
+void mapviewwidget::createCharacterIconContextMenu(QGraphicsPixmapItem *pixmapItem, const QPoint &pos)
+{
+    // Здесь создается контекстное меню для удаления изображения персонажа
+    QMenu menu;
+    QAction *deleteAction = new QAction("Удалить изображение персонажа", this);
+    connect(deleteAction, &QAction::triggered, this, [this, pixmapItem]() {
+        scene->removeItem(pixmapItem);  // Удаляем изображение персонажа
     });
-
-    contextMenu.exec(ui->graphicsView->mapToGlobal(position));
+    menu.addAction(deleteAction);
+    menu.exec(ui->graphicsView->mapToGlobal(pos));  // Отображаем меню в нужной позиции
 }
 
 
@@ -399,4 +339,5 @@ void mapviewwidget::handleIconRightClick(QGraphicsSceneMouseEvent *event)
         createCharacterIconContextMenu(pixmapItem, event->scenePos().toPoint()); // Открываем контекстное меню для иконки
     }
 }
+*/
 
